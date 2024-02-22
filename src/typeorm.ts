@@ -11,7 +11,7 @@ const connectDB = new DataSource({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   entities: [__dirname + '/models/*.ts'],
-  synchronize: false, // set to false in production
+  synchronize: true, // set to false in production
   logging: true
 })
 

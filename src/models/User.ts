@@ -15,7 +15,7 @@ export class User {
   @Column()
   role: string;
 
-  @Column({ name: 'is_admin' })
+  @Column({ name: 'is_admin', default: false })
   isAdmin: boolean;
 
   @CreateDateColumn({ name: 'created_at' })

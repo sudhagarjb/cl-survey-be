@@ -9,10 +9,10 @@ export class Project {
   @Column({ name: 'project_name' })
   projectName: string;
 
-  @Column({ name: 'user_id' })
+  @Column({ name: 'user_id', nullable: false })
   userId: number;
 
-  @Column({ name: 'project_json_data', type: 'json' })
+  @Column({ name: 'project_json_data', type: 'json', nullable: true })
   projectJsonData: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at' })

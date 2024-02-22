@@ -1,32 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 import { Project } from './Project';
-
+import { SurveyTemplate } from './Template';
 @Entity({ name: 'cl_survey' })
 export class Survey {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, { nullable: false })
   @JoinColumn({ name: 'project_id' })
   project: Project;
 
   @Column({ name: 'survey_name' })
   surveyName: string;
 
-  @Column()
+  @Column({ name: 'description', nullable: true })
   description: string;
 
-  @Column()
-  score: number;
-
-  @Column({ name: 'contact_id' })
+  @Column({ name: 'user_id', nullable: false })
   contactId: number;
 
-  @Column({ name: 'survey_json_data', type: 'json' })
-  surveyJsonData: Record<string, any>;
+  @OneToOne(() => SurveyTemplate, { nullable: false })
+  @JoinColumn({ name: 'template_id' })
+  template: SurveyTemplate;
 
-  @Column({ name: 'is_email_sent' })
-  isEmailSent: boolean;
+  @Column({ name: 'survey_json_data', type: 'json', nullable: true })
+  surveyJsonData: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
