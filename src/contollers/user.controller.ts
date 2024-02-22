@@ -1,0 +1,91 @@
+import { Request, Response } from "express";
+import connectDB from '../typeorm';
+import { User } from "../models/User";
+
+export const createUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userRepository = connectDB.getRepository(User);
+    const newUser = userRepository.create(req.body);
+    await userRepository.save(newUser);
+    res.status(201).json(newUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userRepository = connectDB.getRepository(User);
+    const users = await userRepository.find();
+    res.status(200).json(users)
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const userRepository = connectDB.getRepository(User);
+    const user = await userRepository.findOne({ where: { id: parseInt(id) } });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    const userRepository = connectDB.getRepository(User);
+    let user = await userRepository.findOne({ where: { id: parseInt(id) } });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+
+    user = await userRepository.save(user);
+
+    res.json(user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userRepository = connectDB.getRepository(User);
+    const user = await userRepository.findOne({
+      where: { id: parseInt(id) }
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+    await userRepository.remove(user);
+    res.status(204).end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
