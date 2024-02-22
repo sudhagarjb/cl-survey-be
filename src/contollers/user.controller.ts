@@ -14,23 +14,20 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   }
 }
 
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const userRepository = connectDB.getRepository(User);
-    const users = await userRepository.find();
-    res.status(200).json(users)
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-}
 
-export const getUserById = async (req: Request, res: Response): Promise<void> => {
+export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const queryParams = req.query;
 
+    // Create the dynamic where condition based on the query parameters
+    const whereCondition: Record<string, any> = {};
+    Object.keys(queryParams).forEach((key) => {
+      whereCondition[key] = queryParams[key];
+    });
+
+    // Use the dynamic where condition in the TypeORM query
     const userRepository = connectDB.getRepository(User);
-    const user = await userRepository.findOne({ where: { id: parseInt(id) } });
+    const user = await userRepository.findOne({ where: whereCondition });
 
     if (!user) {
       res.status(404).json({ error: 'User not found' });
@@ -43,6 +40,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
   try {

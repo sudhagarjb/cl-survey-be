@@ -1,10 +1,9 @@
 import { Router } from "express";
 import {
   createUser,
-  getAllUsers,
   deleteUser,
   updateUser,
-  getUserById
+  getUser,
 } from '../contollers/user.controller';
 
 const router = Router();
@@ -12,11 +11,8 @@ const router = Router();
 //Create a new user
 router.post("/", createUser);
 
-// Get all users
-router.get("/", getAllUsers);
-
 // Get user by id
-router.get("/:id", getUserById)
+router.get("/", getUser)
 
 // Update a user by ID
 router.put("/:id", updateUser);
