@@ -6,9 +6,9 @@ export class SurveyResponse {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Survey, { nullable: false })
-  @JoinColumn({ name: 'survey_id' })
-  survey: Survey;
+  // @ManyToOne(() => Survey, { nullable: false })
+  @Column({ name: 'survey_id' })
+  surveyId: number;
 
   @Column({ name: 'score', nullable: true })
   score: number;

@@ -7,9 +7,9 @@ export class SurveyTemplate {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Project, { nullable: false })
-  @JoinColumn({ name: 'project_id' })
-  project: Project;
+  // @ManyToOne(() => Project, { nullable: false })
+  @Column({ name: 'project_id' })
+  projectId: number;
 
   @Column({ name: 'question' })
   question: string;
