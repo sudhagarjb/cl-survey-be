@@ -1,16 +1,14 @@
 import 'reflect-metadata';
 import express from 'express';
-import userRoutes from './routes/user.routes';
-import projectRoutes from './routes/project.routes';
 import cors from 'cors';
+import routes from './routes';
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 app.use(express.json());
-app.use('/api/users', userRoutes);
-app.use('/api/projects', projectRoutes);
 app.use(cors())
+app.use(routes);
 
 //validate req
 app.use((_, res, next) => {

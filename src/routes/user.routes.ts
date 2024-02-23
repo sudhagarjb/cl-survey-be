@@ -9,10 +9,10 @@ import {
 const router = Router();
 
 //Create a new user
-router.post("/", createUser);
+router.post("/create", createUser);
 
 // Get user by id
-router.get("/", getUser)
+router.get("/get", getUser)
 
 // Update a user by ID
 router.put("/:id", updateUser);
