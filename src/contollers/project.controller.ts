@@ -26,7 +26,12 @@ export const getProject = async (req: Request, res: Response): Promise<void> => 
 
     // Use the dynamic where condition in the TypeORM query
     const projectRepository = connectDB.getRepository(Project);
-    const projects = await projectRepository.find(whereCondition);
+    const projects = await projectRepository.find({
+      ...whereCondition,
+      order: {
+        createdAt: 'DESC'
+      }
+    });
 
     if (projects.length === 0) {
       res.status(404).json({ error: 'Projects not found' });
