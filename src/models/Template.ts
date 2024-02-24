@@ -11,11 +11,8 @@ export class SurveyTemplate {
   @Column({ name: 'project_id' })
   projectId: number;
 
-  @Column({ name: 'question' })
-  question: string;
-
-  @Column({ name: 'question_type' })
-  questionType: string;
+  @Column({ name: 'template_name' })
+  templateName: string;
 
   @Column({ name: 'description', nullable: true })
   description: string;
