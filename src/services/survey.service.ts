@@ -1,5 +1,3 @@
-// survey.service.ts
-
 import { Repository } from 'typeorm';
 import connectDB from '../typeorm';
 import { Survey } from '../models/Survey';
@@ -66,9 +64,9 @@ export class SurveyService {
   }
 
   convertUtcToIst(date: Date | string): string | null {
-    if (!date) return null; // Return null if date is null or undefined
+    if (!date) return null;
 
-    return momentTz(date).tz('Pacific/Efate').format(); // Convert UTC to IST and return
+    return momentTz(date).tz('Pacific/Efate').format();
   }
 
   formatDate(date: Date): string {
@@ -85,7 +83,7 @@ export class SurveyService {
     const hours = duration.hours();
     const minutes = duration.minutes();
 
-    return `${hours} hours ${minutes} minutes ago`; // Return the formatted time difference
+    return `${hours} hours ${minutes} minutes ago`;
   }
 
   async sendSurvey(contactEmail: string, surveyId: number) {

@@ -11,7 +11,7 @@ const router = Router();
 //Create a new user
 router.post("/create", createUser);
 
-// Get user by id
+// Get user by ID
 router.get("/get", getUser)
 
 // Update a user by ID

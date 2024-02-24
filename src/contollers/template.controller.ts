@@ -1,5 +1,3 @@
-// controllers/template.controller.ts
-
 import { Request, Response } from "express";
 import connectDB from '../typeorm';
 import { SurveyTemplate } from "../models/Template";
@@ -20,10 +18,8 @@ export const getTemplate = async (req: Request, res: Response): Promise<void> =>
   try {
     const queryParams = req.query;
 
-    // Create the dynamic where condition based on the query parameters
     const whereCondition: Record<string, any> = queryParams ? { where: queryParams } : {};
 
-    // Use the dynamic where condition in the TypeORM query
     const templateRepository = connectDB.getRepository(SurveyTemplate);
     const templates = await templateRepository.find({
       ...whereCondition,

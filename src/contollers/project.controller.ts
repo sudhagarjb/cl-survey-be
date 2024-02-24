@@ -1,5 +1,3 @@
-// controllers/project.controller.ts
-
 import { Request, Response } from "express";
 import connectDB from '../typeorm';
 import { Project } from "../models/Project";
@@ -19,11 +17,8 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
 export const getProject = async (req: Request, res: Response): Promise<void> => {
   try {
     const queryParams = req.query;
-
-    // Create the dynamic where condition based on the query parameters
     const whereCondition: Record<string, any> = queryParams ? { where: queryParams } : {};
 
-    // Use the dynamic where condition in the TypeORM query
     const projectRepository = connectDB.getRepository(Project);
     const projects = await projectRepository.find({
       ...whereCondition,

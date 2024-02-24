@@ -1,5 +1,3 @@
-// controllers/survey.controller.ts
-
 import { Request, Response } from "express";
 import connectDB from '../typeorm';
 import { Survey } from "../models/Survey";
@@ -20,7 +18,6 @@ export const getSurvey = async (req: Request, res: Response): Promise<void> => {
   try {
     const queryParams = req.query;
 
-    // Create the dynamic where condition based on the query parameters
     const whereCondition: Record<string, any> = queryParams ? { where: queryParams } : {};
 
     const surveyService = new SurveyService();

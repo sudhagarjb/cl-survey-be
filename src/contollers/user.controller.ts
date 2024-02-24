@@ -19,10 +19,8 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
   try {
     const queryParams = req.query;
 
-    // Create the dynamic where condition based on the query parameters
     const whereCondition: Record<string, any> = queryParams ? { where: queryParams } : {};
 
-    // Use the dynamic where condition in the TypeORM query
     const userRepository = connectDB.getRepository(User);
     const users = await userRepository.find(whereCondition);
 
