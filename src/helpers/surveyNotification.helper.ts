@@ -1,6 +1,9 @@
 import { v5 as uuidv5 } from 'uuid';
 import { createHash } from 'crypto';
 import nodemailer from 'nodemailer';
+import fs from 'fs';
+import ejs from 'ejs';
+
 import {
   SURVEY_DOMAIN,
   SENDER_EMAIL,
@@ -27,6 +30,13 @@ export async function generateSurveyLink(email: string, surveyId: number): Promi
 
 export async function sendNotificationEmail(contactEmail: string, surveyLink: string): Promise<void> {
   try {
+
+    // Read EJS template file
+    const template = fs.readFileSync('src/mailers/surveyEmailTemplate.ejs', 'utf8');
+
+    // Render the template with variables
+    const emailContent = ejs.render(template, { surveyLink });
+
     // Create a SMTP transporter using Gmail's SMTP server
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -40,8 +50,8 @@ export async function sendNotificationEmail(contactEmail: string, surveyLink: st
     const mailOptions = {
       from: SENDER_EMAIL,
       to: contactEmail,
-      subject: 'Survey Notification',
-      text: `Dear user,\n\nPlease click on the following link to complete the survey:\n${surveyLink}`
+      subject: 'Your shopping experience with Caratlane!',
+      html: emailContent
     };
 
     // Send email
