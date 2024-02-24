@@ -6,14 +6,13 @@ import { Project } from "../models/Project";
 
 export const createProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log("query", req.body)
     const projectRepository = connectDB.getRepository(Project);
     const newProject = projectRepository.create(req.body);
     await projectRepository.save(newProject);
     res.status(201).json(newProject);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 }
 
@@ -41,7 +40,7 @@ export const getProject = async (req: Request, res: Response): Promise<void> => 
     res.status(200).json(projects);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 

@@ -6,14 +6,13 @@ import { SurveyTemplate } from "../models/Template";
 
 export const createTemplate = async (req: Request, res: Response): Promise<void> => {
   try {
-    console.log("query", req.body)
     const templateRepository = connectDB.getRepository(SurveyTemplate);
     const newTemplate = templateRepository.create(req.body);
     await templateRepository.save(newTemplate);
     res.status(201).json(newTemplate);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 }
 
@@ -41,7 +40,7 @@ export const getTemplate = async (req: Request, res: Response): Promise<void> =>
     res.status(200).json(templates);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 
@@ -61,7 +60,7 @@ export const deleteTemplate = async (req: Request, res: Response): Promise<void>
     res.status(204).end();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 

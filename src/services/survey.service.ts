@@ -7,6 +7,7 @@ import { Project } from '../models/Project';
 import { SurveyTemplate } from '../models/Template';
 import moment from 'moment';
 import momentTz from 'moment-timezone';
+import { generateSurveyLink, sendNotificationEmail } from '../helpers/surveyNotification.helper';
 
 export class SurveyService {
   private surveyRepository: Repository<Survey>;
@@ -36,11 +37,7 @@ export class SurveyService {
       const template = await this.templateRepository.findOneBy({ id: survey.templateId });
 
       // Format last modified date and calculate difference in hours
-
-      console.log(survey.updatedAt);
       const { lastModifiedDate, lastModifiedHours } = this.formatLastModified(survey.updatedAt);
-
-      console.log(lastModifiedDate, lastModifiedHours);
 
       return {
         ...survey,
@@ -90,5 +87,24 @@ export class SurveyService {
 
     return `${hours} hours ${minutes} minutes ago`; // Return the formatted time difference
   }
+
+  async sendSurvey(contactEmail: string, surveyId: number) {
+
+    if (!surveyId) {
+      throw new Error(`SurveyId cannot be empty`);
+    }
+
+    // Generate survey link
+    const surveyLink = await generateSurveyLink(contactEmail, surveyId);
+    console.log(surveyLink);
+
+    // Send notification email
+    await sendNotificationEmail(contactEmail, surveyLink);
+
+    // Save survey request details
+    // await saveSurveyRequest(contactEmail, surveyId, surveyLink);
+  }
+
+
 
 }

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createSurvey, getSurvey, deleteSurvey } from '../contollers/survey.controller';
+import { createSurvey, getSurvey, deleteSurvey, sendSurvey } from '../contollers/survey.controller';
 
 const router = Router();
 
@@ -11,5 +11,8 @@ router.get("/get", getSurvey);
 
 // Delete survey by id
 router.delete("/delete/:id", deleteSurvey);
+
+// Send survey
+router.post("/send", sendSurvey);
 
 export default router;

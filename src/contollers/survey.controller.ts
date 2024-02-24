@@ -13,7 +13,7 @@ export const createSurvey = async (req: Request, res: Response): Promise<void> =
     res.status(201).json(newSurvey);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 }
 export const getSurvey = async (req: Request, res: Response): Promise<void> => {
@@ -33,7 +33,7 @@ export const getSurvey = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json(surveyDetails);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 
@@ -53,7 +53,18 @@ export const deleteSurvey = async (req: Request, res: Response): Promise<void> =
     res.status(204).end();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 
+export const sendSurvey = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { contactEmail, surveyId } = req.body;
+    await new SurveyService().sendSurvey(contactEmail, surveyId);
+
+    res.status(200).json({ message: 'Survey sent successfully' });
+  } catch (error) {
+    console.error('Error sending survey:', error);
+    res.status(500).json({ error: `Internal Server Error - ${error}` });
+  }
+};

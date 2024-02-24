@@ -10,7 +10,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     res.status(201).json(newUser);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 }
 
@@ -34,7 +34,7 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json(users);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 
@@ -60,7 +60,7 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
     res.json(user);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 };
 
@@ -80,7 +80,7 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
     res.status(204).end();
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 }
 
