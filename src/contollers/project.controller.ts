@@ -24,7 +24,8 @@ export const getProject = async (req: Request, res: Response): Promise<void> => 
       ...whereCondition,
       order: {
         createdAt: 'DESC'
-      }
+      },
+      relations: ['templates', 'surveys']
     });
 
     if (projects.length === 0) {
