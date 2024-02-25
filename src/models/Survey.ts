@@ -28,9 +28,6 @@ export class Survey {
   @Column({ name: 'user_id', nullable: false })
   userId: number;
 
-  @Column({ name: 'survey_json_data', type: 'json', nullable: true })
-  surveyJsonData: Record<string, any>;
-
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

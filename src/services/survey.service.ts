@@ -164,4 +164,29 @@ export class SurveyService {
     }
   }
 
+
+  async getSurveyDetailsFromUuid(uuid: string): Promise<any> {
+    try {
+      const surveyDetails = await connectDB
+        .createQueryBuilder()
+        .select('surveyRequest')
+        .from(SurveyRequest, 'surveyRequest')
+        .leftJoinAndSelect('surveyRequest.survey', 'survey')
+        .leftJoinAndSelect('survey.project', 'project')
+        .leftJoinAndSelect('survey.template', 'template')
+        .where('surveyRequest.uuid = :uuid', { uuid: uuid })
+        .getOne();
+
+      console.log(surveyDetails);
+      if (!surveyDetails) {
+        return [];
+      }
+
+      return surveyDetails;
+    } catch (error) {
+      console.error('Error fetching survey details:', error);
+      throw error;
+    }
+  }
+
 }

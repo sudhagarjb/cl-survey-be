@@ -11,9 +11,6 @@ export class SurveyRequest {
   @JoinColumn({ name: 'survey_id' })
   survey: Survey;
 
-  @Column({ name: 'survey_name' })
-  surveyName: string;
-
   @Column({ name: 'contact_id', nullable: false })
   contactId: number;
 

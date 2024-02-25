@@ -4,6 +4,5 @@ export interface ISurveyRequest {
   survey: {
     id: number;
   };
-  surveyName: string;
   metaData: string;
 }

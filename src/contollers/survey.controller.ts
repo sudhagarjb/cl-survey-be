@@ -69,3 +69,18 @@ export const sendSurvey = async (req: Request, res: Response): Promise<void> => 
     res.status(500).json({ error: `Internal Server Error - ${error}` });
   }
 };
+
+export const fetchSurveyData = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { uuid } = req.params;
+    const surveyData = await new SurveyService().getSurveyDetailsFromUuid(uuid);
+    if (surveyData.length == 0) {
+      res.status(404).json({ error: 'Survey with uuid not found' });
+      return;
+    }
+    res.status(200).json(surveyData);
+  } catch (error) {
+    console.error('Fetching survey:', error);
+    res.status(500).json({ error: `Internal Server Error - ${error}` });
+  }
+};
