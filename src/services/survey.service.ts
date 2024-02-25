@@ -24,7 +24,8 @@ export class SurveyService {
       ...whereCondition,
       order: {
         createdAt: 'DESC'
-      }
+      },
+      relations: ['template', 'project'],
     });
 
     if (surveys.length === 0) {
@@ -32,16 +33,12 @@ export class SurveyService {
     }
 
     const surveyDetails = await Promise.all(surveys.map(async (survey) => {
-      const project = await this.projectRepository.findOneBy({ id: survey.projectId });
-      const template = await this.templateRepository.findOneBy({ id: survey.templateId });
 
       // Format last modified date and calculate difference in hours
       const { lastModifiedDate, lastModifiedHours } = this.formatLastModified(survey.updatedAt);
 
       return {
         ...survey,
-        project,
-        template,
         lastModifiedDate,
         lastModifiedHours
       };

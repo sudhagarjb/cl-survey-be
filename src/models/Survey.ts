@@ -1,15 +1,19 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
 import { Project } from './Project';
 import { SurveyTemplate } from './Template';
-import { NumericLiteral } from 'typescript';
+
 @Entity({ name: 'cl_survey' })
 export class Survey {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => Project, { nullable: false })
-  @Column({ name: 'project_id' })
-  projectId: number;
+  @ManyToOne(() => Project, project => project.surveys, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'project_id' })
+  project: Project;
+
+  @ManyToOne(() => SurveyTemplate, template => template.surveys, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'template_id' })
+  template: SurveyTemplate;
 
   @Column({ name: 'survey_name' })
   surveyName: string;
@@ -19,10 +23,6 @@ export class Survey {
 
   @Column({ name: 'user_id', nullable: false })
   userId: number;
-
-  // @OneToOne(() => SurveyTemplate, { nullable: false })
-  @Column({ name: 'template_id' })
-  templateId: number;
 
   @Column({ name: 'survey_json_data', type: 'json', nullable: true })
   surveyJsonData: Record<string, any>;

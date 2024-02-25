@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, JoinColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Survey } from './Survey';
 import { Project } from './Project';
 
 @Entity({ name: 'cl_survey_template' })
@@ -6,6 +7,9 @@ export class SurveyTemplate {
 
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToMany(() => Survey, survey => survey.template)
+  surveys: Survey[];
 
   // @ManyToOne(() => Project, { nullable: false })
   @Column({ name: 'project_id' })
