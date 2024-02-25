@@ -40,3 +40,22 @@ export const getProject = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
+export const deleteProject = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const projectRepository = connectDB.getRepository(Project);
+    const project = await projectRepository.findOne({
+      where: { id: parseInt(id) }
+    });
+
+    if (!project) {
+      res.status(404).json({ error: 'Project not found' });
+      return;
+    }
+    await projectRepository.remove(project);
+    res.status(204).end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
+  }
+};

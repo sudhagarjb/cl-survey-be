@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createProject, getProject } from '../contollers/project.controller';
+import { createProject, getProject, deleteProject } from '../contollers/project.controller';
 
 const router = Router();
 
@@ -8,5 +8,8 @@ router.post("/create", createProject);
 
 // Get project by query parameters
 router.get("/get", getProject);
+
+// Delete project by id
+router.delete("/delete/:id", deleteProject);
 
 export default router;
