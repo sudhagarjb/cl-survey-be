@@ -7,16 +7,20 @@ import moment from 'moment';
 import momentTz from 'moment-timezone';
 import { generateSurveyHash, sendNotificationEmail } from '../helpers/surveyNotification.helper';
 import { SURVEY_DOMAIN } from '../constants/survey.constants';
+import { SurveyRequest } from '../models/SurveyRequest';
+import { ISurveyRequest } from '../interfaces/surveyRequest.interface';
 
 export class SurveyService {
   private surveyRepository: Repository<Survey>;
   private projectRepository: Repository<Project>;
   private templateRepository: Repository<SurveyTemplate>;
+  private surveyRequestRepository: Repository<SurveyRequest>;
 
   constructor() {
     this.surveyRepository = connectDB.getRepository(Survey);
     this.projectRepository = connectDB.getRepository(Project);
     this.templateRepository = connectDB.getRepository(SurveyTemplate);
+    this.surveyRequestRepository = connectDB.getRepository(SurveyRequest);
   }
 
   async getSurveyDetails(whereCondition: Object): Promise<any[]> {
@@ -112,26 +116,52 @@ export class SurveyService {
     return `${hours} hours ${minutes} minutes ago`;
   }
 
-  async sendSurvey(contactEmail: string, surveyId: number) {
-
-    if (!surveyId) {
+  async sendSurvey(surveyRequest: ISurveyRequest) {
+    if (surveyRequest.surveyId) {
+      const survey = await this.surveyRepository.findOneBy({ id: surveyRequest.surveyId })
+      if (!survey) {
+        throw new Error(`Survey ${surveyRequest.surveyId} not found`);
+      }
+    }
+    else {
       throw new Error(`SurveyId cannot be empty`);
     }
 
-    // Generate survey link
-    const uuid = await generateSurveyHash(contactEmail, surveyId);
-
-    // Construct the survey link with the truncated hash
+    const uuid = await generateSurveyHash(surveyRequest.contactEmailId, surveyRequest.surveyId, surveyRequest.metaData);
     const surveyLink = SURVEY_DOMAIN + uuid
 
     // Send notification email
-    const isEmailSent = await sendNotificationEmail(contactEmail, surveyLink);
+    const isEmailSent = await sendNotificationEmail(surveyRequest.contactEmailId, surveyLink);
 
-    console.log(surveyId, contactEmail, uuid, surveyLink, isEmailSent);
+    const surveyRequestDetails = {
+      ...surveyRequest,
+      surveyUrl: surveyLink,
+      uuid: uuid,
+      isEmailSent: isEmailSent
+    }
+    console.log(surveyRequestDetails);
     // Save survey request details
-    // await saveSurveyRequest(contactEmail, surveyId, surveyLink);
+    return await this.saveSurveyRequest(surveyRequestDetails, uuid);
   }
 
+  async saveSurveyRequest(surveyRequestDtls: object, uuid: string) {
+    try {
+      // Check if a survey request with the given UUID already exists
+      const existingSurveyRequest = await this.surveyRequestRepository.findOneBy({ uuid: uuid });
 
+      if (existingSurveyRequest) {
+        const updatedSurveyRequest = await this.surveyRequestRepository.save({
+          ...existingSurveyRequest,
+          ...surveyRequestDtls
+        });
+        return updatedSurveyRequest;
+      } else {
+        const newSurveyRequest = await this.surveyRequestRepository.save(surveyRequestDtls);
+        return newSurveyRequest;
+      }
+    } catch (error) {
+      throw new Error(`Error saving survey request`);
+    }
+  }
 
 }

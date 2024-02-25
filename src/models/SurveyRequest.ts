@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
 
 @Entity({ name: 'cl_survey_request' })
+@Unique(['uuid'])
 export class SurveyRequest {
   @PrimaryGeneratedColumn()
   id: number;

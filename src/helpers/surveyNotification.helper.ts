@@ -10,12 +10,12 @@ import {
   SENDER_APP_USERNAME
 } from '../constants/survey.constants';
 
-export async function generateSurveyHash(email: string, surveyId: number): Promise<string> {
+export async function generateSurveyHash(email: string, surveyId: number, metaData: string): Promise<string> {
   // Generate a UUID for the survey link using surveyId as namespace
   const uuid = uuidv5(email, uuidv5.URL);
 
   // Combine UUID and salt to create a hash
-  const hash = createHash('sha256').update(uuid + email + surveyId).digest('hex');
+  const hash = createHash('sha256').update(uuid + email + surveyId + metaData).digest('hex');
 
   // Truncate the hash to 8 digits
   const truncatedHash = hash.slice(0, 8);

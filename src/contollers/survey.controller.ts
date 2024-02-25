@@ -62,10 +62,9 @@ export const deleteSurvey = async (req: Request, res: Response): Promise<void> =
 
 export const sendSurvey = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { contactEmail, surveyId } = req.body;
-    await new SurveyService().sendSurvey(contactEmail, surveyId);
-
-    res.status(200).json({ message: 'Survey sent successfully' });
+    const surveyRequest = await new SurveyService().sendSurvey(req.body);
+    console.log(surveyRequest);
+    res.status(200).json(surveyRequest);
   } catch (error) {
     console.error('Error sending survey:', error);
     res.status(500).json({ error: `Internal Server Error - ${error}` });
