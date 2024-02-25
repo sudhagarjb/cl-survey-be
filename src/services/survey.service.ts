@@ -117,17 +117,17 @@ export class SurveyService {
   }
 
   async sendSurvey(surveyRequest: ISurveyRequest) {
-    if (surveyRequest.surveyId) {
-      const survey = await this.surveyRepository.findOneBy({ id: surveyRequest.surveyId })
+    if (surveyRequest.survey.id) {
+      const survey = await this.surveyRepository.findOneBy({ id: surveyRequest.survey.id })
       if (!survey) {
-        throw new Error(`Survey ${surveyRequest.surveyId} not found`);
+        throw new Error(`Survey ${surveyRequest.survey.id} not found`);
       }
     }
     else {
       throw new Error(`SurveyId cannot be empty`);
     }
 
-    const uuid = await generateSurveyHash(surveyRequest.contactEmailId, surveyRequest.surveyId, surveyRequest.metaData);
+    const uuid = await generateSurveyHash(surveyRequest.contactEmailId, surveyRequest.survey.id, surveyRequest.metaData);
     const surveyLink = SURVEY_DOMAIN + uuid
 
     // Send notification email

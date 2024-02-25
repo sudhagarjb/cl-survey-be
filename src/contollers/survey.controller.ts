@@ -63,7 +63,6 @@ export const deleteSurvey = async (req: Request, res: Response): Promise<void> =
 export const sendSurvey = async (req: Request, res: Response): Promise<void> => {
   try {
     const surveyRequest = await new SurveyService().sendSurvey(req.body);
-    console.log(surveyRequest);
     res.status(200).json(surveyRequest);
   } catch (error) {
     console.error('Error sending survey:', error);

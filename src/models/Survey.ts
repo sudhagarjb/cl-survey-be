@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, OneToOne, OneToMany } from 'typeorm';
 import { Project } from './Project';
 import { SurveyTemplate } from './Template';
+import { SurveyRequest } from './SurveyRequest';
 
 @Entity({ name: 'cl_survey' })
 export class Survey {
@@ -14,6 +15,9 @@ export class Survey {
   @ManyToOne(() => SurveyTemplate, template => template.surveys, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'template_id' })
   template: SurveyTemplate;
+
+  @OneToMany(() => SurveyRequest, surveyRequest => surveyRequest.survey)
+  surveyRequests: SurveyRequest[];
 
   @Column({ name: 'survey_name' })
   surveyName: string;

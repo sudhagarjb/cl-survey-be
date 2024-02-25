@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Unique, JoinColumn, ManyToOne } from 'typeorm';
+import { Survey } from './Survey';
 
 @Entity({ name: 'cl_survey_request' })
 @Unique(['uuid'])
@@ -6,9 +7,9 @@ export class SurveyRequest {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @ManyToOne(() => Survey, { nullable: false })
-  @Column({ name: 'survey_id', nullable: false })
-  surveyId: number;
+  @ManyToOne(() => Survey, survey => survey.surveyRequests)
+  @JoinColumn({ name: 'survey_id' })
+  survey: Survey;
 
   @Column({ name: 'survey_name' })
   surveyName: string;
