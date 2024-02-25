@@ -6,14 +6,20 @@ import { SurveyService } from '../services/survey.service';
 export const createSurvey = async (req: Request, res: Response): Promise<void> => {
   try {
     const surveyRepository = connectDB.getRepository(Survey);
-    const newSurvey = surveyRepository.create(req.body);
-    await surveyRepository.save(newSurvey);
+    const survey = await surveyRepository.save(req.body);
+    const { lastModifiedDate, lastModifiedHours } = new SurveyService().formatLastModified(survey.updatedAt);
+    const newSurvey = {
+      ...survey,
+      lastModifiedDate,
+      lastModifiedHours
+    }
     res.status(201).json(newSurvey);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: `Internal Server Error - ${err}` });
   }
 }
+
 export const getSurvey = async (req: Request, res: Response): Promise<void> => {
   try {
     const queryParams = req.query;

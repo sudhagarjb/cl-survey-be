@@ -5,7 +5,8 @@ import { Project } from '../models/Project';
 import { SurveyTemplate } from '../models/Template';
 import moment from 'moment';
 import momentTz from 'moment-timezone';
-import { generateSurveyLink, sendNotificationEmail } from '../helpers/surveyNotification.helper';
+import { generateSurveyHash, sendNotificationEmail } from '../helpers/surveyNotification.helper';
+import { SURVEY_DOMAIN } from '../constants/survey.constants';
 
 export class SurveyService {
   private surveyRepository: Repository<Survey>;
@@ -93,12 +94,15 @@ export class SurveyService {
     }
 
     // Generate survey link
-    const surveyLink = await generateSurveyLink(contactEmail, surveyId);
-    console.log(surveyLink);
+    const uuid = await generateSurveyHash(contactEmail, surveyId);
+
+    // Construct the survey link with the truncated hash
+    const surveyLink = SURVEY_DOMAIN + uuid
 
     // Send notification email
-    await sendNotificationEmail(contactEmail, surveyLink);
+    const isEmailSent = await sendNotificationEmail(contactEmail, surveyLink);
 
+    console.log(surveyId, contactEmail, uuid, surveyLink, isEmailSent);
     // Save survey request details
     // await saveSurveyRequest(contactEmail, surveyId, surveyLink);
   }

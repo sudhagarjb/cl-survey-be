@@ -5,13 +5,12 @@ import fs from 'fs';
 import ejs from 'ejs';
 
 import {
-  SURVEY_DOMAIN,
   SENDER_EMAIL,
   SENDER_APP_PASSWORD,
   SENDER_APP_USERNAME
 } from '../constants/survey.constants';
 
-export async function generateSurveyLink(email: string, surveyId: number): Promise<string> {
+export async function generateSurveyHash(email: string, surveyId: number): Promise<string> {
   // Generate a UUID for the survey link using surveyId as namespace
   const uuid = uuidv5(email, uuidv5.URL);
 
@@ -21,14 +20,11 @@ export async function generateSurveyLink(email: string, surveyId: number): Promi
   // Truncate the hash to 8 digits
   const truncatedHash = hash.slice(0, 8);
 
-  // Construct the survey link with the truncated hash
-  const surveyLink = SURVEY_DOMAIN + truncatedHash
-
-  return surveyLink;
+  return truncatedHash;
 }
 
 
-export async function sendNotificationEmail(contactEmail: string, surveyLink: string): Promise<void> {
+export async function sendNotificationEmail(contactEmail: string, surveyLink: string): Promise<boolean> {
   try {
 
     // Read EJS template file
@@ -54,10 +50,13 @@ export async function sendNotificationEmail(contactEmail: string, surveyLink: st
       html: emailContent
     };
 
-    // Send email
-    await transporter.sendMail(mailOptions);
-
-    console.log('Notification email sent successfully!');
+    const info = await transporter.sendMail(mailOptions);
+    if (info.response.includes('OK')) {
+      console.log('Notification email sent successfully!', info.response);
+      return true;
+    } else {
+      throw new Error(`Error sending email: ${info.response}`);
+    }
   } catch (error) {
     console.error('Error sending notification email:', error);
     throw error;
