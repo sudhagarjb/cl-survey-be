@@ -47,6 +47,34 @@ export class SurveyService {
     return surveyDetails;
   }
 
+  async getTemplateDetails(whereCondition: Object): Promise<any[]> {
+    const templates = await this.templateRepository.find({
+      ...whereCondition,
+      order: {
+        createdAt: 'DESC'
+      },
+      relations: ['project', 'surveys'],
+    });
+
+    if (templates.length === 0) {
+      return [];
+    }
+
+    const templateDetails = await Promise.all(templates.map(async (template) => {
+
+      // Format last modified date and calculate difference in hours
+      const { lastModifiedDate, lastModifiedHours } = this.formatLastModified(template.updatedAt);
+
+      return {
+        ...template,
+        lastModifiedDate,
+        lastModifiedHours
+      };
+    }));
+
+    return templateDetails;
+  }
+
   formatLastModified(lastModifiedUtc: Date | string): { lastModifiedDate: string, lastModifiedHours: string } {
     const istDate = this.convertUtcToIst(lastModifiedUtc);
     const currentUtcDate = new Date();

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Survey } from './Survey';
+import { SurveyTemplate } from './Template';
 
 @Entity({ name: 'cl_survey_project' })
 export class Project {
@@ -9,6 +10,9 @@ export class Project {
 
   @OneToMany(() => Survey, survey => survey.project)
   surveys: Survey[];
+
+  @OneToMany(() => SurveyTemplate, template => template.project)
+  templates: SurveyTemplate[];
 
   @Column({ name: 'project_name' })
   projectName: string;

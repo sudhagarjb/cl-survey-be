@@ -11,9 +11,9 @@ export class SurveyTemplate {
   @OneToMany(() => Survey, survey => survey.template)
   surveys: Survey[];
 
-  // @ManyToOne(() => Project, { nullable: false })
-  @Column({ name: 'project_id' })
-  projectId: number;
+  @ManyToOne(() => Project, project => project.templates, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'project_id' })
+  project: Project;
 
   @Column({ name: 'template_name' })
   templateName: string;

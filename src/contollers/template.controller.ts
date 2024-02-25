@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import connectDB from '../typeorm';
 import { SurveyTemplate } from "../models/Template";
+import { SurveyService } from '../services/survey.service';
 
 export const createTemplate = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -20,20 +21,14 @@ export const getTemplate = async (req: Request, res: Response): Promise<void> =>
 
     const whereCondition: Record<string, any> = queryParams ? { where: queryParams } : {};
 
-    const templateRepository = connectDB.getRepository(SurveyTemplate);
-    const templates = await templateRepository.find({
-      ...whereCondition,
-      order: {
-        createdAt: 'DESC'
-      }
-    });
+    const surveyService = new SurveyService();
+    const templateDetails = await surveyService.getTemplateDetails(whereCondition);
 
-    if (templates.length === 0) {
-      res.status(404).json({ error: 'Templates not found' });
+    if (templateDetails.length === 0) {
+      res.status(404).json({ error: 'Template not found' });
       return;
     }
-
-    res.status(200).json(templates);
+    res.status(200).json(templateDetails);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: `Internal Server Error - ${err}` });
