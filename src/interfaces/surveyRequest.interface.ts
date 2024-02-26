@@ -2,7 +2,7 @@ export interface ISurveyRequest {
   contactId: number;
   contactName: string;
   contactEmailId: string;
-  phone: number;
+  phone: string;
   survey: {
     id: number;
   };

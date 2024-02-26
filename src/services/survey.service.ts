@@ -180,6 +180,7 @@ export class SurveyService {
         .leftJoinAndSelect('surveyRequest.survey', 'survey')
         .leftJoinAndSelect('survey.project', 'project')
         .leftJoinAndSelect('survey.template', 'template')
+        .leftJoinAndSelect('surveyRequest.contact', 'contact')
         .where('surveyRequest.uuid = :uuid', { uuid: uuid })
         .getOne();
 

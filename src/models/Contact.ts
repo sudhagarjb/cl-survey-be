@@ -1,10 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn, UpdateDateColumn } from 'typeorm';
-import { Survey } from './Survey';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { SurveyRequest } from './SurveyRequest';
 
 @Entity({ name: 'cl_survey_contact' })
 export class Contact {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @OneToMany(() => SurveyRequest, surveyRequest => surveyRequest.contact)
+  surveyRequests: SurveyRequest[];
 
   @Column()
   name: string;
@@ -13,7 +16,7 @@ export class Contact {
   emailId: string;
 
   @Column()
-  phone: number;
+  phone: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
