@@ -184,13 +184,33 @@ export class SurveyService {
           ...existingSurveyResponse,
           ...surveyResponseDtls
         });
+        if ('surveyResponseData' in surveyResponseDtls && surveyResponseDtls['surveyResponseData'] !== null) {
+          await this.updateSurveyRequestIsSurveyCompleted(uuid);
+        }
+
         return updatedSurveyResponse;
       } else {
-        const newSurveyRequest = await this.surveyResponseRepository.save(surveyResponseDtls);
-        return newSurveyRequest;
+        const newSurveyResponse = await this.surveyResponseRepository.save(surveyResponseDtls);
+        if ('surveyResponseData' in surveyResponseDtls && surveyResponseDtls['surveyResponseData'] !== null) {
+          await this.updateSurveyRequestIsSurveyCompleted(uuid);
+        }
+        return newSurveyResponse;
       }
     } catch (error) {
       throw new Error(`Error saving survey response: ${error}`);
+    }
+  }
+
+  async updateSurveyRequestIsSurveyCompleted(uuid: string) {
+    try {
+      const surveyRequest = await this.surveyRequestRepository.findOneBy({ uuid: uuid });
+
+      if (surveyRequest) {
+        surveyRequest.isSurveyCompleted = true;
+        await this.surveyRequestRepository.save(surveyRequest);
+      }
+    } catch (error) {
+      throw new Error(`Error updating survey request: ${error}`);
     }
   }
 

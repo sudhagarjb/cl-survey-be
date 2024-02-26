@@ -34,6 +34,9 @@ export class SurveyRequest {
   @Column({ name: 'is_email_sent' })
   isEmailSent: boolean;
 
+  @Column({ name: 'is_survey_completed', default: false })
+  isSurveyCompleted: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
