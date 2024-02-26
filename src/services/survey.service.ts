@@ -8,6 +8,7 @@ import momentTz from 'moment-timezone';
 import { generateSurveyHash, sendNotificationEmail } from '../helpers/surveyNotification.helper';
 import { SURVEY_DOMAIN } from '../constants/survey.constants';
 import { SurveyRequest } from '../models/SurveyRequest';
+import { Contact } from '../models/Contact';
 import { ISurveyRequest } from '../interfaces/surveyRequest.interface';
 
 export class SurveyService {
@@ -15,12 +16,14 @@ export class SurveyService {
   private projectRepository: Repository<Project>;
   private templateRepository: Repository<SurveyTemplate>;
   private surveyRequestRepository: Repository<SurveyRequest>;
+  private contactRepository: Repository<Contact>;
 
   constructor() {
     this.surveyRepository = connectDB.getRepository(Survey);
     this.projectRepository = connectDB.getRepository(Project);
     this.templateRepository = connectDB.getRepository(SurveyTemplate);
     this.surveyRequestRepository = connectDB.getRepository(SurveyRequest);
+    this.contactRepository = connectDB.getRepository(Contact);
   }
 
   async getSurveyDetails(whereCondition: Object): Promise<any[]> {
@@ -127,6 +130,9 @@ export class SurveyService {
       throw new Error(`SurveyId cannot be empty`);
     }
 
+    const contact = await this.saveContacts(surveyRequest);
+    surveyRequest.contactId = contact.id;
+
     const uuid = await generateSurveyHash(surveyRequest.contactEmailId, surveyRequest.survey.id, surveyRequest.metaData);
     const surveyLink = SURVEY_DOMAIN + uuid
 
@@ -186,6 +192,36 @@ export class SurveyService {
     } catch (error) {
       console.error('Error fetching survey details:', error);
       throw error;
+    }
+  }
+
+  async saveContacts(contactDtls: ISurveyRequest) {
+    try {
+
+      console.log('contactDtls', contactDtls);
+      const { contactName, contactEmailId, phone } = contactDtls;
+
+      const newContact = {
+        name: contactName,
+        emailId: contactEmailId,
+        phone: phone
+      }
+      // Check if a contact with the given email already exists
+      const existingContact = await this.contactRepository.findOneBy({ emailId: contactEmailId });
+      console.log('existingContact', existingContact);
+
+      if (existingContact) {
+        const updatedContact = await this.contactRepository.save({
+          ...existingContact,
+          ...newContact
+        });
+        return updatedContact;
+      } else {
+        const newSurveyRequest = await this.contactRepository.save(newContact);
+        return newSurveyRequest;
+      }
+    } catch (error) {
+      throw new Error(`Error saving contact request`);
     }
   }
 
