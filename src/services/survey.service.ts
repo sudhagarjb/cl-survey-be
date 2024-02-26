@@ -3,6 +3,7 @@ import connectDB from '../typeorm';
 import { Survey } from '../models/Survey';
 import { Project } from '../models/Project';
 import { SurveyTemplate } from '../models/Template';
+import { SurveyResponse } from '../models/SurveyResponse';
 import moment from 'moment';
 import momentTz from 'moment-timezone';
 import { generateSurveyHash, sendNotificationEmail } from '../helpers/surveyNotification.helper';
@@ -16,6 +17,7 @@ export class SurveyService {
   private projectRepository: Repository<Project>;
   private templateRepository: Repository<SurveyTemplate>;
   private surveyRequestRepository: Repository<SurveyRequest>;
+  private surveyResponseRepository: Repository<SurveyResponse>;
   private contactRepository: Repository<Contact>;
 
   constructor() {
@@ -23,6 +25,7 @@ export class SurveyService {
     this.projectRepository = connectDB.getRepository(Project);
     this.templateRepository = connectDB.getRepository(SurveyTemplate);
     this.surveyRequestRepository = connectDB.getRepository(SurveyRequest);
+    this.surveyResponseRepository = connectDB.getRepository(SurveyResponse);
     this.contactRepository = connectDB.getRepository(Contact);
   }
 
@@ -166,10 +169,30 @@ export class SurveyService {
         return newSurveyRequest;
       }
     } catch (error) {
-      throw new Error(`Error saving survey request`);
+      throw new Error(`Error saving survey request: ${error}`);
     }
   }
 
+  async saveSurveyResponse(surveyResponseDtls: object, uuid: string) {
+    try {
+      await this.validateSurveyResponse(surveyResponseDtls);
+      // Check if a survey request with the given UUID already exists
+      const existingSurveyResponse = await this.surveyResponseRepository.findOneBy({ uuid: uuid });
+
+      if (existingSurveyResponse) {
+        const updatedSurveyResponse = await this.surveyResponseRepository.save({
+          ...existingSurveyResponse,
+          ...surveyResponseDtls
+        });
+        return updatedSurveyResponse;
+      } else {
+        const newSurveyRequest = await this.surveyResponseRepository.save(surveyResponseDtls);
+        return newSurveyRequest;
+      }
+    } catch (error) {
+      throw new Error(`Error saving survey response: ${error}`);
+    }
+  }
 
   async getSurveyDetailsFromUuid(uuid: string): Promise<any> {
     try {
@@ -199,7 +222,6 @@ export class SurveyService {
   async saveContacts(contactDtls: ISurveyRequest) {
     try {
 
-      console.log('contactDtls', contactDtls);
       const { contactName, contactEmailId, phone } = contactDtls;
 
       const newContact = {
@@ -209,7 +231,6 @@ export class SurveyService {
       }
       // Check if a contact with the given email already exists
       const existingContact = await this.contactRepository.findOneBy({ emailId: contactEmailId });
-      console.log('existingContact', existingContact);
 
       if (existingContact) {
         const updatedContact = await this.contactRepository.save({
@@ -223,6 +244,28 @@ export class SurveyService {
       }
     } catch (error) {
       throw new Error(`Error saving contact request`);
+    }
+  }
+
+  async validateSurveyResponse(payload: any): Promise<void> {
+    const { contactId, surveyId, uuid } = payload;
+
+    // Validate contactId
+    const contact = await this.contactRepository.findOneBy({ id: contactId });
+    if (!contact) {
+      throw new Error(`Contact with ID ${contactId} not found`);
+    }
+
+    // Validate surveyId
+    const survey = await this.surveyRepository.findOneBy({ id: surveyId });
+    if (!survey) {
+      throw new Error(`Survey with ID ${surveyId} not found`);
+    }
+
+    // Validate UUID
+    const surveyRequest = await this.surveyRequestRepository.findOneBy({ uuid: uuid });
+    if (!surveyRequest) {
+      throw new Error(`Survey request with UUID ${uuid} not found`);
     }
   }
 

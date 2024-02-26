@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, JoinColumn, Unique } from 'typeorm';
 import { Survey } from './Survey';
 
 @Entity({ name: 'cl_survey_response' })
+@Unique(['uuid'])
 export class SurveyResponse {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,6 +16,9 @@ export class SurveyResponse {
 
   @Column({ name: 'contact_id', nullable: false })
   contactId: number;
+
+  @Column({ name: 'uuid' })
+  uuid: string;
 
   @Column({ name: 'survey_response_data', type: 'json', nullable: true })
   surveyResponseData: Record<string, any>;
