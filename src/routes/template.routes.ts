@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createTemplate, getTemplate, deleteTemplate } from '../contollers/template.controller';
+import { createTemplate, getTemplate, deleteTemplate, updateTemplate } from '../contollers/template.controller';
 
 const router = Router();
 
@@ -11,5 +11,7 @@ router.get("/get", getTemplate);
 
 // Delete template by id
 router.delete("/delete/:id", deleteTemplate);
+
+router.put("/update/:id", updateTemplate);
 
 export default router;

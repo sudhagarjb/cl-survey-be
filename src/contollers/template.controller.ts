@@ -35,6 +35,33 @@ export const getTemplate = async (req: Request, res: Response): Promise<void> =>
   }
 };
 
+export const updateTemplate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    console.log({ id });
+    if (id) {
+      const templateRepository = connectDB.getRepository(SurveyTemplate);
+      let templateToUpdate = await templateRepository.findOneBy({
+        id: +id,
+      });
+      console.log({ templateToUpdate, body: req.body });
+      templateToUpdate = req.body;
+      if (templateToUpdate) {
+        await templateRepository.save(templateToUpdate);
+        res.status(201).json(templateToUpdate);
+      }
+    } else {
+      res.status(404).json({ error: "Template not found" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: `Internal Server Error - ${err}` });
+  }
+};
+
 export const deleteTemplate = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
